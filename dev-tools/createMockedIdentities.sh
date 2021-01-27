@@ -56,14 +56,14 @@ while true; do echo -n .; sleep 1; done &
 child_pid=$!
 
 # Create the first entity (Service Provider + Issuer)
-cd ../exampleFirstEntity/ 
+cd ../exampleFirstEntity/
 node 1.createEntityAlastriaID.js >/dev/null 2>&1 ; print_msg_identity $? "entity1" "exampleFirstEntity/1.createEntityAlastriaID.js"
 node 2.addEntity.js >/dev/null 2>&1 ; print_msg_new_entity $? "entity1" "exampleFirstEntity/2.addEntity.js"
-node 3.addIdentityIssuer.js >/dev/null 2>&1 ; print_msg_role $? "Issuer" "entity1" "exampleFirstEntity/2.addIdentityIssuer.js"
-node 4.addIdentityServiceProvider.js >/dev/null 2>&1 ; print_msg_role $? "Service Provider" "entity1" "exampleFirstEntity/3.addIdentityServiceProvider.js"
+node 3.addIdentityIssuer.js >/dev/null 2>&1 ; print_msg_role $? "Issuer" "entity1" "exampleFirstEntity/3.addIdentityIssuer.js"
+node 4.addIdentityServiceProvider.js >/dev/null 2>&1 ; print_msg_role $? "Service Provider" "entity1" "exampleFirstEntity/4.addIdentityServiceProvider.js"
 
 # Create the rest of AlastriaID's
-cd ../exampleCreateAlastriaID/ ; 
+cd ../exampleCreateAlastriaID/ ;
 node 1.createEntity2AlastriaID.js >/dev/null 2>&1 ; print_msg_identity $? "entity2" "exampleCreateAlastriaID/1.createEntity2AlastriaID.js"
 node 2.createEntity3AlastriaID.js >/dev/null 2>&1 ; print_msg_identity $? "entity3" "exampleCreateAlastriaID/2.createEntity3AlastriaID.js"
 node 3.createSubject1AlastriaID.js >/dev/null 2>&1 ; print_msg_identity $? "subject1" "exampleCreateAlastriaID/3.createSubject1AlastriaID.js"
