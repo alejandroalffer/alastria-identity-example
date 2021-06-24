@@ -2,7 +2,7 @@ const { tokensFactory } = require('alastria-identity-lib')
 const fs = require('fs')
 const keythereum = require('keythereum')
 
-const rawdata = fs.readFileSync('../configuration.json')
+const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 
 const keyDataEntity1 = fs.readFileSync(

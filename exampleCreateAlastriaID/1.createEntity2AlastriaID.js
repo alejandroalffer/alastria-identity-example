@@ -8,7 +8,7 @@ const fs = require('fs')
 const Web3 = require('web3')
 const keythereum = require('keythereum')
 
-const rawdata = fs.readFileSync('../configuration.json')
+const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 
 // Init your blockchain provider
@@ -21,10 +21,7 @@ const keyDataEntity1 = fs.readFileSync(
 const entity1KeyStore = JSON.parse(keyDataEntity1)
 let entity1PrivateKey
 try {
-  entity1PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    entity1KeyStore
-  )
+  entity1PrivateKey = "cd3e2a416b9686dbb105f671377896ee55984a436b041b21b2f53cc0ab5354a9"
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)

@@ -8,7 +8,7 @@ const fs = require('fs')
 const Web3 = require('web3')
 const keythereum = require('keythereum')
 
-const rawdata = fs.readFileSync('../configuration.json')
+const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 // Init your blockchain provider
 const myBlockchainServiceIp = configData.nodeURL
@@ -20,10 +20,7 @@ const keyDataEntity1 = fs.readFileSync(
 const entity1KeyStore = JSON.parse(keyDataEntity1)
 let entity1PrivateKey
 try {
-  entity1PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    entity1KeyStore
-  )
+  entity1PrivateKey = "cd3e2a416b9686dbb105f671377896ee55984a436b041b21b2f53cc0ab5354a9"
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
@@ -40,10 +37,7 @@ const keyDataEntity3 = fs.readFileSync(
 const entity3Keystore = JSON.parse(keyDataEntity3)
 let entity3PrivateKey
 try {
-  entity3PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    entity3Keystore
-  )
+  entity3PrivateKey = "cd3e2a416b9686dbb105f671377896ee55984a436b041b21b2f53cc0ab5354a9"
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
@@ -151,7 +145,7 @@ async function main() {
               )
               configData.entity3 = `0x${AlastriaIdentity.slice(26)}`
               fs.writeFileSync(
-                '../configuration.json',
+                '../configuration-b.json',
                 JSON.stringify(configData, null, 4)
               )
               const alastriaDID = tokensFactory.tokens.createDID(
@@ -161,7 +155,7 @@ async function main() {
               )
               configData.didEntity3 = alastriaDID
               fs.writeFileSync(
-                '../configuration.json',
+                '../configuration-bjson',
                 JSON.stringify(configData, null, 4)
               )
               console.log('the alastria DID is:', alastriaDID)
