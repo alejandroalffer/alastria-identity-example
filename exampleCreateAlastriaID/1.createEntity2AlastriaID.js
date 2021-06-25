@@ -8,7 +8,6 @@ const fs = require('fs')
 const Web3 = require('web3')
 const keythereum = require('keythereum')
 const ethers = require('ethers');
-const web3jseea= require('web3js-eea');
 
 
 const rawdata = fs.readFileSync('../configuration-b.json')
