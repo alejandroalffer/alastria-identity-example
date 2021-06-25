@@ -7,6 +7,9 @@ const {
 const fs = require('fs')
 const Web3 = require('web3')
 const keythereum = require('keythereum')
+const ethers = require('ethers');
+const web3jseea= require('web3js-eea');
+
 
 const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
@@ -19,17 +22,28 @@ const keyDataEntity1 = fs.readFileSync(
   '../keystores/entity1-a9728125c573924b2b1ad6a8a8cd9bf6858ced49.json'
 )
 const entity1KeyStore = JSON.parse(keyDataEntity1)
+const mnemonic = configData.mnemonic;
 let entity1PrivateKey
 try {
-  entity1PrivateKey = "cd3e2a416b9686dbb105f671377896ee55984a436b041b21b2f53cc0ab5354a9"
+  //let mnemonicWallet = ethers.Wallet.fromMnemonic(mnemonic);
+  //entity1Priadsgsgf = "0x1f20d5db0517e9a93f4693d728c038fa6494487c2516bd97a067924a833e1902"
+  //entity1PrivateKey = "cd3e2a416b9686dbb105f671377896ee55984a436b041b21b2f53cc0ab5354a9"
+  entity1aPrivateKey =  ethers.Wallet.fromMnemonic(mnemonic).privateKey.substr(2);
+  entity1aPublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonic).privateKey).substr(2);
+  entity1aAddress = ethers.Wallet.fromMnemonic(mnemonic).address.substr(2);
+  console.log('Clave privada: ', entity1aPrivateKey)
+  console.log('Clave publica: ', entity1aPublicKey)
+  console.log('Address: ', entity1aAddress)
+
+  web3
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
 }
 const entity1Identity = new UserIdentity(
   web3,
-  `0x${entity1KeyStore.address}`,
-  entity1PrivateKey
+  `0x${entity1aAddress}`,
+  entity1aPrivateKey
 )
 
 const keyDataEntity2 = fs.readFileSync(
@@ -58,7 +72,7 @@ console.log(
 )
 // (In this example the Entity1 is not added as service provider or issuer, only is the AlastriaIDentity creation)
 
-function preparedAlastriaId() {
+function preparedAlastriaId() {  
   const preparedId = transactionFactory.identityManager.prepareAlastriaID(
     web3,
     entity2Identity.address
@@ -86,11 +100,11 @@ async function main() {
     configData.networkId,
     configData.tokenExpTime,
     configData.kidCredential,
-    configData.entity1Pubk,
+    entity1aPublicKey,
     configData.tokenActivationDate,
     configData.jsonTokenId
   )
-  const signedAT = tokensFactory.tokens.signJWT(at, entity1PrivateKey)
+  const signedAT = tokensFactory.tokens.signJWT(at, entity1aPrivateKey)
   console.log('\tsignedAT: \n', signedAT)
 
   const createResult = await createAlastriaId()

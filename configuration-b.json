@@ -1,6 +1,7 @@
 {
     "nodeURL": "http://63.33.206.111:8545",
     "addressPassword": "Passw0rd",
+    "mnemonic": "avoid hole fish girl immune mammal link fiscal steak pigeon oppose path purpose member market",
     "rawPublicKeySubject": "03fdd57adec3d438ea237fe46b33ee1e016eda6b585c3e27ea66686c2ea5358479",
     "rawPublicKeyReceiver": "8b82bb2b1b5b4c1d56beeb88c98fcf894c23e8dee598d94c1c77099d3a80367f46",
     "firstIdentityPubk": "0x0ce5edc204ae977d6d69fcc6b339a57b544ef4d094929f3eb918a77dfba26998e77ec5b29a379dd59bbe962e2b22745143aa2b52c4a875b7492c137eeebf4055",
