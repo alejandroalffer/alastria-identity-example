@@ -1,7 +1,9 @@
 const { transactionFactory, UserIdentity } = require('alastria-identity-lib')
 const fs = require('fs')
 const keythereum = require('keythereum')
-const rawdata = fs.readFileSync('../configuration.json')
+const ethers = require('ethers');
+
+const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 
 const presentationHashData = fs.readFileSync(`./PSMHashEntity2.json`)
@@ -11,26 +13,25 @@ const Web3 = require('web3')
 const myBlockchainServiceIp = configData.nodeURL
 const web3 = new Web3(new Web3.providers.HttpProvider(myBlockchainServiceIp))
 
-const keyDataEntity2 = fs.readFileSync(
-  '../keystores/entity2-ad88f1a89cf02a32010b971d8c8af3a2c7b3bd94.json'
-)
-const keystoreDataEntity2 = JSON.parse(keyDataEntity2)
 
-const entity2Keystore = keystoreDataEntity2
-
+const mnemonicE2 = configData.mnemonicE2;
 let entity2PrivateKey
+let entity2PublicKey
+let entity2Address
 try {
-  entity2PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    entity2Keystore
-  )
+  entity2PrivateKey =  ethers.Wallet.fromMnemonic(mnemonicE2).privateKey.substr(2);
+  entity2PrivateKey0x =  ethers.Wallet.fromMnemonic(mnemonicE2).privateKey;
+  entity2PublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE2).privateKey).substr(2);
+  entity2PublicKey0x = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE2).privateKey);
+  entity2Address = ethers.Wallet.fromMnemonic(mnemonicE2).address.substr(2);
+
 } catch (error) {
   console.error('ERROR: ', error)
 }
 
 const entity2Identity = new UserIdentity(
   web3,
-  `0x${entity2Keystore.address}`,
+  `0x${entity2Address}`,
   entity2PrivateKey
 )
 

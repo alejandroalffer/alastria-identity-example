@@ -10,6 +10,7 @@ const keythereum = require('keythereum')
 const ethers = require('ethers');
 
 
+
 const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 
@@ -17,44 +18,41 @@ const configData = JSON.parse(rawdata)
 const myBlockchainServiceIp = configData.nodeURL
 const web3 = new Web3(new Web3.providers.HttpProvider(myBlockchainServiceIp))
 
-const keyDataEntity1 = fs.readFileSync(
-  '../keystores/entity1-a9728125c573924b2b1ad6a8a8cd9bf6858ced49.json'
-)
-const entity1KeyStore = JSON.parse(keyDataEntity1)
-const mnemonic = configData.mnemonic;
+const mnemonicE1 = configData.mnemonicE1;
 let entity1PrivateKey
+let entity1PublicKey
+let entity1Address
 try {
-  //let mnemonicWallet = ethers.Wallet.fromMnemonic(mnemonic);
-  //entity1Priadsgsgf = "0x1f20d5db0517e9a93f4693d728c038fa6494487c2516bd97a067924a833e1902"
-  //entity1PrivateKey = "cd3e2a416b9686dbb105f671377896ee55984a436b041b21b2f53cc0ab5354a9"
-  entity1aPrivateKey =  ethers.Wallet.fromMnemonic(mnemonic).privateKey.substr(2);
-  entity1aPublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonic).privateKey).substr(2);
-  entity1aAddress = ethers.Wallet.fromMnemonic(mnemonic).address.substr(2);
-  console.log('Clave privada: ', entity1aPrivateKey)
-  console.log('Clave publica: ', entity1aPublicKey)
-  console.log('Address: ', entity1aAddress)
+  entity1PrivateKey =  ethers.Wallet.fromMnemonic(mnemonicE1).privateKey.substr(2);
+  entity1PrivateKey0x =  ethers.Wallet.fromMnemonic(mnemonicE1).privateKey;
+  entity1PublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE1).privateKey).substr(2);
+  entity1PublicKey0x = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE1).privateKey);
+  entity1Address = ethers.Wallet.fromMnemonic(mnemonicE1).address.substr(2);
 
-  web3
+  //web3
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
 }
 const entity1Identity = new UserIdentity(
   web3,
-  `0x${entity1aAddress}`,
-  entity1aPrivateKey
+  `0x${entity1Address}`,
+  entity1PrivateKey
 )
 
-const keyDataEntity2 = fs.readFileSync(
-  '../keystores/entity2-ad88f1a89cf02a32010b971d8c8af3a2c7b3bd94.json'
-)
-const entity2Keystore = JSON.parse(keyDataEntity2)
+
+const mnemonicE2 = configData.mnemonicE2;
 let entity2PrivateKey
+let entity2PublicKey
+let entity2Address
 try {
-  entity2PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    entity2Keystore
-  )
+  entity2PrivateKey =  ethers.Wallet.fromMnemonic(mnemonicE2).privateKey.substr(2);
+  entity2PrivateKey0x =  ethers.Wallet.fromMnemonic(mnemonicE2).privateKey;
+  entity2PublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE2).privateKey).substr(2);
+  entity2PublicKey0x = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE2).privateKey);
+  entity2Address = ethers.Wallet.fromMnemonic(mnemonicE2).address.substr(2);
+
+  
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
@@ -62,7 +60,7 @@ try {
 
 const entity2Identity = new UserIdentity(
   web3,
-  `0x${entity2Keystore.address}`,
+  `0x${entity2Address}`,
   entity2PrivateKey
 )
 
@@ -74,7 +72,7 @@ console.log(
 function preparedAlastriaId() {  
   const preparedId = transactionFactory.identityManager.prepareAlastriaID(
     web3,
-    entity2Identity.address
+    entity2Address
   )
   return preparedId
 }
@@ -82,8 +80,7 @@ function preparedAlastriaId() {
 function createAlastriaId() {
   const txCreateAlastriaID = transactionFactory.identityManager.createAlastriaIdentity(
     web3,
-    configData.entity2Pubk.substr(2)
-  )
+    entity2PublicKey  )
   return txCreateAlastriaID
 }
 
@@ -99,11 +96,11 @@ async function main() {
     configData.networkId,
     configData.tokenExpTime,
     configData.kidCredential,
-    entity1aPublicKey,
+    entity1PublicKey0x,
     configData.tokenActivationDate,
     configData.jsonTokenId
   )
-  const signedAT = tokensFactory.tokens.signJWT(at, entity1aPrivateKey)
+  const signedAT = tokensFactory.tokens.signJWT(at, entity1PrivateKey)
   console.log('\tsignedAT: \n', signedAT)
 
   const createResult = await createAlastriaId()
@@ -117,7 +114,7 @@ async function main() {
     [],
     signedCreateTransaction,
     signedAT,
-    configData.entity2Pubk
+    entity2PrivateKey
   )
   const signedAIC = tokensFactory.tokens.signJWT(aic, entity2PrivateKey)
   console.log('\tsignedAIC: \n', signedAIC)
@@ -152,7 +149,7 @@ async function main() {
               to: config.alastriaIdentityManager,
               data: web3.eth.abi.encodeFunctionCall(
                 config.contractsAbi.AlastriaIdentityManager.identityKeys,
-                [`0x${entity2Keystore.address}`]
+                [`0x${entity2Address}`]
               )
             })
             .then((AlastriaIdentity) => {
@@ -161,7 +158,7 @@ async function main() {
               )
               configData.entity2 = `0x${AlastriaIdentity.slice(26)}`
               fs.writeFileSync(
-                '../configuration.json',
+                '../configuration-b.json',
                 JSON.stringify(configData, null, 4)
               )
               const alastriaDID = tokensFactory.tokens.createDID(
@@ -171,7 +168,7 @@ async function main() {
               )
               configData.didEntity2 = alastriaDID
               fs.writeFileSync(
-                '../configuration.json',
+                '../configuration-b.json',
                 JSON.stringify(configData, null, 4)
               )
               console.log('the alastria DID is:', alastriaDID)

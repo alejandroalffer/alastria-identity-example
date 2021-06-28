@@ -2,27 +2,27 @@ const { transactionFactory, UserIdentity } = require('alastria-identity-lib')
 const Web3 = require('web3')
 const fs = require('fs')
 const keythereum = require('keythereum')
+const ethers = require('ethers');
 
-const rawdata = fs.readFileSync('../configuration.json')
+const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 
-const keyDataEntity1 = fs.readFileSync(
-  '../keystores/entity1-a9728125c573924b2b1ad6a8a8cd9bf6858ced49.json'
-)
-const keystoreDataEntity1 = JSON.parse(keyDataEntity1)
 
 // Init your blockchain provider
 const myBlockchainServiceIp = configData.nodeURL
 const web3 = new Web3(new Web3.providers.HttpProvider(myBlockchainServiceIp))
 
-const entity1KeyStore = keystoreDataEntity1
-
+const mnemonicE1 = configData.mnemonicE1;
 let entity1PrivateKey
+let entity1PublicKey
+let entity1Address
 try {
-  entity1PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    entity1KeyStore
-  )
+  entity1PrivateKey =  ethers.Wallet.fromMnemonic(mnemonicE1).privateKey.substr(2);
+  entity1PrivateKey0x =  ethers.Wallet.fromMnemonic(mnemonicE1).privateKey;
+  entity1PublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE1).privateKey).substr(2);
+  entity1PublicKey0x = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE1).privateKey);
+  entity1Address = ethers.Wallet.fromMnemonic(mnemonicE1).address.substr(2);
+
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
@@ -30,14 +30,14 @@ try {
 
 const entity1Identity = new UserIdentity(
   web3,
-  `0x${entity1KeyStore.address}`,
+  `0x${entity1Address}`,
   entity1PrivateKey
 )
 
 // Im not sure if this is needed
 async function unlockAccount() {
   const unlockedAccount = await web3.eth.personal.unlockAccount(
-    entity1Identity.address,
+    entity1Address,
     configData.addressPassword,
     500
   )
@@ -48,7 +48,7 @@ async function unlockAccount() {
 async function mainAddEntity() {
   unlockAccount()
   console.log('\n ------ Example of adding the entity1 like a Entity ------ \n')
-  const transactionAddEntity = await transactionFactory.alastriaNameService.addEntity(
+  const transactionAddEntity = await transactionFactory.identityManager.addEntity(
     web3,
     configData.didEntity2,
     configData.entityData2.name,

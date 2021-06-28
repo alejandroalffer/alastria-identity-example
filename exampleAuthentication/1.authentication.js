@@ -1,42 +1,44 @@
 const { tokensFactory } = require('alastria-identity-lib')
 const fs = require('fs')
 const keythereum = require('keythereum')
+const ethers = require('ethers');
 
 const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 
-const keyDataEntity1 = fs.readFileSync(
-  '../keystores/entity1-a9728125c573924b2b1ad6a8a8cd9bf6858ced49.json'
-)
-const keystoreDataEntity1 = JSON.parse(keyDataEntity1)
-const keyDataSubject1 = fs.readFileSync(
-  '../keystores/subject1-806bc0d7a47b890383a831634bcb92dd4030b092.json'
-)
-const keystoreDataSubject1 = JSON.parse(keyDataSubject1)
 
+const mnemonicE1 = configData.mnemonicE1;
 // Init your blockchain provider
 
-const entity1KeyStore = keystoreDataEntity1
 
 let entity1PrivateKey
+let entity1PublicKey
+let entity1Address
 try {
-  entity1PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    entity1KeyStore
-  )
+  entity1PrivateKey =  ethers.Wallet.fromMnemonic(mnemonicE1).privateKey.substr(2);
+  entity1PrivateKey0x =  ethers.Wallet.fromMnemonic(mnemonicE1).privateKey;
+  entity1PublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE1).privateKey).substr(2);
+  entity1PublicKey0x = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE1).privateKey);
+  entity1Address = ethers.Wallet.fromMnemonic(mnemonicE1).address.substr(2);
+  
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
 }
 
-const subject1Keystore = keystoreDataSubject1
+
+const mnemonicS1 = configData.mnemonicS1;
 
 let subject1PrivateKey
+let subject1PublicKey
+let subject1Address
 try {
-  subject1PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    subject1Keystore
-  )
+  subject1PrivateKey =  ethers.Wallet.fromMnemonic(mnemonicS1).privateKey.substr(2);
+  subject1PrivateKey0x =  ethers.Wallet.fromMnemonic(mnemonicS1).privateKey;
+  subject1PublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicS1).privateKey).substr(2);
+  subject1PublicKey0x = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicS1).privateKey);
+  subject1Address = ethers.Wallet.fromMnemonic(mnemonicS1).address.substr(2);
+  
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
@@ -58,19 +60,18 @@ const alastriaToken = tokensFactory.tokens.createAlastriaToken(
 console.log('\tThe Alastria token is: \n', alastriaToken)
 
 // Signing the AlastriaToken
-const signedAT = tokensFactory.tokens.signJWT(alastriaToken, entity1PrivateKey)
-
+const signedAT = tokensFactory.tokens.signJWT(alastriaToken, entity1PrivateKey0x)
 // '04' means uncompressed key (more info at https://github.com/indutny/elliptic/issues/138)
 const verifyAT = tokensFactory.tokens.verifyJWT(
   signedAT,
-  '04' + configData.entity1Pubk.substr(2)
+  entity1PublicKey
 )
 console.log('\tIs the signedJWT verified?', verifyAT)
 
 const alastriaSession = tokensFactory.tokens.createAlastriaSession(
   configData.context,
   configData.didSubject1,
-  configData.subject1Pubk,
+  subject1PublicKey0x,
   signedAT,
   configData.tokenExpTime,
   configData.tokenActivationDate,
@@ -87,6 +88,6 @@ console.log('\tThe signedAS is:\n', signedAS)
 // '04' means uncompressed key (more info at https://github.com/indutny/elliptic/issues/138)
 const verifyAS = tokensFactory.tokens.verifyJWT(
   signedAS,
-  '04' + configData.subject1Pubk.substr(2)
+  subject1PublicKey
 )
 console.log('\tIs the signedJWT verified?', verifyAS)

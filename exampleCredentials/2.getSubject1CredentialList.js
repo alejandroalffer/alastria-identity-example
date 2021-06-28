@@ -2,7 +2,7 @@ const { transactionFactory } = require('alastria-identity-lib')
 const Web3 = require('web3')
 const fs = require('fs')
 
-const rawdata = fs.readFileSync('../configuration.json')
+const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 
 // Init your blockchain provider

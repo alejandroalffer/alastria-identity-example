@@ -7,6 +7,8 @@ const {
 const fs = require('fs')
 const Web3 = require('web3')
 const keythereum = require('keythereum')
+const ethers = require('ethers');
+
 
 const rawdata = fs.readFileSync('../configuration.json')
 const configData = JSON.parse(rawdata)
@@ -20,42 +22,46 @@ const web3 = new Web3(new Web3.providers.HttpProvider(myBlockchainServiceIp))
 const keyDataEntity1 = fs.readFileSync(
   '../keystores/entity1-a9728125c573924b2b1ad6a8a8cd9bf6858ced49.json'
 )
-const entity1KeyStore = JSON.parse(keyDataEntity1)
+const mnemonicE1 = configData.mnemonicE1;
 let entity1PrivateKey
+let entity1PublicKey
+let entity1Address
 try {
-  entity1PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    entity1KeyStore
-  )
+  entity1PrivateKey =  ethers.Wallet.fromMnemonic(mnemonicE1).privateKey.substr(2);
+  entity1PrivateKey0x =  ethers.Wallet.fromMnemonic(mnemonicE1).privateKey;
+  entity1PublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE1).privateKey).substr(2);
+  entity1PublicKey0x = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE1).privateKey);
+  entity1Address = ethers.Wallet.fromMnemonic(mnemonicE1).address.substr(2);
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
 }
 const entity1Identity = new UserIdentity(
   web3,
-  `0x${entity1KeyStore.address}`,
+  `0x${entity1Address}`,
   entity1PrivateKey
 )
 
 // We have Subject2 which is a person with an identity wallet. You get its private key and instantiate its UserIdentity
 // This step should be done in the private Wallet.
-const keyDataSubject2 = fs.readFileSync(
-  '../keystores/subject2-6e3976aeaa3a59e4af51783cc46ee0ffabc5dc11.json'
-)
-const subject2Keystore = JSON.parse(keyDataSubject2)
+const mnemonicS2 = configData.mnemonicS2;
+
 let subject2PrivateKey
+let subject2PublicKey
+let subject2Address
 try {
-  subject2PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    subject2Keystore
-  )
+  subject2PrivateKey =  ethers.Wallet.fromMnemonic(mnemonicS2).privateKey.substr(2);
+  subject2PrivateKey0x =  ethers.Wallet.fromMnemonic(mnemonicS2).privateKey;
+  subject2PublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicS2).privateKey).substr(2);
+  subject2PublicKey0x = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicS2).privateKey);
+  subject2Address = ethers.Wallet.fromMnemonic(mnemonicS2).address.substr(2);
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
 }
 const subject2Identity = new UserIdentity(
   web3,
-  `0x${subject2Keystore.address}`,
+  `0x${subject2Address}`,
   subject2PrivateKey
 )
 
@@ -66,7 +72,7 @@ console.log(
 function preparedAlastriaId() {
   const preparedId = transactionFactory.identityManager.prepareAlastriaID(
     web3,
-    `0x${subject2Keystore.address}`
+    `0x${subject2Address}`
   )
   return preparedId
 }
@@ -74,7 +80,7 @@ function preparedAlastriaId() {
 function createAlastriaId() {
   const txCreateAlastriaID = transactionFactory.identityManager.createAlastriaIdentity(
     web3,
-    configData.subject2Pubk.substr(2)
+    subject2PublicKey
   )
   return txCreateAlastriaID
 }
@@ -91,7 +97,7 @@ async function main() {
     configData.networkId,
     configData.tokenExpTime,
     configData.kidCredential,
-    configData.entity1Pubk,
+    entity1PublicKey0x,
     configData.tokenActivationDate,
     configData.jsonTokenId
   )
@@ -110,7 +116,7 @@ async function main() {
     [],
     signedCreateTransaction,
     signedAT,
-    configData.subject2Pubk
+    subject2PublicKey0x
   )
   const signedAIC = tokensFactory.tokens.signJWT(aic, subject2PrivateKey)
   console.log('\tsignedAIC: \n', signedAIC)
@@ -145,7 +151,7 @@ async function main() {
               to: config.alastriaIdentityManager,
               data: web3.eth.abi.encodeFunctionCall(
                 config.contractsAbi.AlastriaIdentityManager.identityKeys,
-                [`0x${subject2Keystore.address}`]
+                [`0x${subject2Address}`]
               )
             })
             .then((AlastriaIdentity) => {
@@ -154,7 +160,7 @@ async function main() {
               )
               configData.subject2 = `0x${AlastriaIdentity.slice(26)}`
               fs.writeFileSync(
-                '../configuration.json',
+                '../configuration-b.json',
                 JSON.stringify(configData, null, 4)
               )
               const alastriaDID = tokensFactory.tokens.createDID(
@@ -164,7 +170,7 @@ async function main() {
               )
               configData.didSubject2 = alastriaDID
               fs.writeFileSync(
-                '../configuration.json',
+                '../configuration-b.json',
                 JSON.stringify(configData, null, 4)
               )
               console.log('the alastria DID is:', alastriaDID)

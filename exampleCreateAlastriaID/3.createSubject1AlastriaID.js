@@ -7,8 +7,9 @@ const {
 const fs = require('fs')
 const Web3 = require('web3')
 const keythereum = require('keythereum')
+const ethers = require('ethers');
 
-const rawdata = fs.readFileSync('../configuration.json')
+const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 
 // Init your blockchain provider
@@ -21,52 +22,56 @@ console.log(
 
 // We have Entity1 which is an entity with both roles: Issuer (required) and Service Provider (not required).
 // You get its private key and instantiate its UserIdentity
-const keyDataEntity1 = fs.readFileSync(
-  '../keystores/entity1-a9728125c573924b2b1ad6a8a8cd9bf6858ced49.json'
-)
-const entity1KeyStore = JSON.parse(keyDataEntity1)
+
+const mnemonicE1 = configData.mnemonicE1;
 let entity1PrivateKey
+let entity1PublicKey
+let entity1Address
 try {
-  entity1PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    entity1KeyStore
-  )
+  entity1PrivateKey =  ethers.Wallet.fromMnemonic(mnemonicE1).privateKey.substr(2);
+  entity1PrivateKey0x =  ethers.Wallet.fromMnemonic(mnemonicE1).privateKey;
+  entity1PublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE1).privateKey).substr(2);
+  entity1PublicKey0x = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicE1).privateKey);
+  entity1Address = ethers.Wallet.fromMnemonic(mnemonicE1).address.substr(2);
+
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
 }
 const entity1Identity = new UserIdentity(
   web3,
-  `0x${entity1KeyStore.address}`,
+  `0x${entity1Address}`,
   entity1PrivateKey
 )
 
 // We have Subject1 which is a person with an identity wallet. You get its private key and instantiate its UserIdentity
 // This step should be done in the private Wallet.
-const keyDataSubject1 = fs.readFileSync(
-  '../keystores/subject1-806bc0d7a47b890383a831634bcb92dd4030b092.json'
-)
-const subject1Keystore = JSON.parse(keyDataSubject1)
+const mnemonicS1 = configData.mnemonicS1;
+
 let subject1PrivateKey
+let subject1PublicKey
+let subject1Address
 try {
-  subject1PrivateKey = keythereum.recover(
-    configData.addressPassword,
-    subject1Keystore
-  )
+  subject1PrivateKey =  ethers.Wallet.fromMnemonic(mnemonicS1).privateKey.substr(2);
+  subject1PrivateKey0x =  ethers.Wallet.fromMnemonic(mnemonicS1).privateKey;
+  subject1PublicKey = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicS1).privateKey).substr(2);
+  subject1PublicKey0x = ethers.utils.computePublicKey(ethers.Wallet.fromMnemonic(mnemonicS1).privateKey);
+  subject1Address = ethers.Wallet.fromMnemonic(mnemonicS1).address.substr(2);
+  
 } catch (error) {
   console.error('ERROR: ', error)
   process.exit(1)
 }
 const subject1Identity = new UserIdentity(
   web3,
-  `0x${subject1Keystore.address}`,
+  `0x${subject1Address}`,
   subject1PrivateKey
 )
 
 function prepareAlastriaId() {
   const preparedId = transactionFactory.identityManager.prepareAlastriaID(
     web3,
-    `0x${subject1Keystore.address}`
+    `0x${subject1Address}`
   )
   return preparedId
 }
@@ -74,7 +79,7 @@ function prepareAlastriaId() {
 function createAlastriaId() {
   const txCreateAlastriaID = transactionFactory.identityManager.createAlastriaIdentity(
     web3,
-    configData.subject1Pubk.substr(2)
+    subject1PublicKey
   )
   return txCreateAlastriaID
 }
@@ -91,7 +96,7 @@ async function main() {
     configData.networkId,
     configData.tokenExpTime,
     configData.kidCredential,
-    configData.entity1Pubk,
+    entity1PublicKey0x,
     configData.tokenActivationDate,
     configData.jsonTokenId
   )
@@ -110,7 +115,7 @@ async function main() {
     [],
     signedCreateTransaction,
     signedAT,
-    configData.subject1Pubk
+    subject1PublicKey0x
   )
   const signedAIC = tokensFactory.tokens.signJWT(aic, subject1PrivateKey)
   console.log('\tsignedAIC: \n', signedAIC)
@@ -145,7 +150,7 @@ async function main() {
               to: config.alastriaIdentityManager,
               data: web3.eth.abi.encodeFunctionCall(
                 config.contractsAbi.AlastriaIdentityManager.identityKeys,
-                [`0x${subject1Keystore.address}`]
+                [`0x${subject1Address}`]
               )
             })
             .then((AlastriaIdentity) => {
@@ -154,7 +159,7 @@ async function main() {
               )
               configData.subject1 = `0x${AlastriaIdentity.slice(26)}`
               fs.writeFileSync(
-                '../configuration.json',
+                '../configuration-b.json',
                 JSON.stringify(configData, null, 4)
               )
               const alastriaDID = tokensFactory.tokens.createDID(
@@ -164,7 +169,7 @@ async function main() {
               )
               configData.didSubject1 = alastriaDID
               fs.writeFileSync(
-                '../configuration.json',
+                '../configuration-b.json',
                 JSON.stringify(configData, null, 4)
               )
               console.log('the alastria DID is:', alastriaDID)

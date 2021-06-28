@@ -2,7 +2,7 @@ const { transactionFactory } = require('alastria-identity-lib')
 const Web3 = require('web3')
 const fs = require('fs')
 
-const rawdata = fs.readFileSync('../configuration.json')
+const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 
 const myBlockchainServiceIp = configData.nodeURL
@@ -27,7 +27,7 @@ web3.eth
     console.log(
       'Convert the publicKey to byte32 as the input parameter requires this type'
     )
-    const publicKeyAsByte32 = `0x${web3.utils.sha3(publicKeyAsString)}`
+    const publicKeyAsByte32 = web3.utils.sha3(publicKeyAsString)
     const date = 1588612481
 
     console.log('Check if it is valid for a date')

@@ -1,11 +1,12 @@
 const { transactionFactory } = require('alastria-identity-lib')
 const Web3 = require('web3')
 const fs = require('fs')
+const ethers = require('ethers');
 
 const CONFIG_NEEDED_KEYS = ['nodeURL', 'didEntity1']
 
 const rawdata = fs.readFileSync(
-  process.env.CONFIGURATION_PATH || '../configuration.json'
+  process.env.CONFIGURATION_PATH || '../configuration-b.json'
 )
 const configData = JSON.parse(rawdata)
 

@@ -2,7 +2,7 @@ const { transactionFactory } = require('alastria-identity-lib')
 const Web3 = require('web3')
 const fs = require('fs')
 
-const rawdata = fs.readFileSync('../configuration.json')
+const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 
 // Init your blockchain provider
@@ -17,7 +17,7 @@ if (configData.subject1 === undefined) {
   process.exit(1)
 }
 
-const entityData = transactionFactory.alastriaNameService.getEntity(
+const entityData = transactionFactory.identityManager.getEntity(
   web3,
   configData.didEntity1
 )
