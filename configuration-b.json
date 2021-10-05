@@ -1,6 +1,13 @@
 {
     "nodeURL": "http://63.33.206.111:8545",
     "addressPassword": "Passw0rd",
+    "mnemonicE1": "avoid hole fish girl immune mammal link fiscal steak pigeon oppose path purpose member market",
+    "mnemonicE2": "maid present basket universe utility fortune cost west enroll answer great alien swap expect afraid",
+    "mnemonicE3": "object tank duty service spin leopard day recipe replace cute nuclear raccoon tail scene inspire",
+    "mnemonicS1": "range into arrow weasel festival creek van scrap orchard much velvet lunch spy theory crew",
+    "mnemonicS2": "topic nasty shadow cross stove pool afford clump saddle mother rate pumpkin arrange gloom search",
+    "mnemonicAdmin": "express skull festival canal wheat gas frost cover combine mansion naive payment until correct setup",
+    "mnemonicFirstID": "myself shock silly retire mad project win hope during nominee early wasp fashion tornado fire",
     "rawPublicKeySubject": "03fdd57adec3d438ea237fe46b33ee1e016eda6b585c3e27ea66686c2ea5358479",
     "rawPublicKeyReceiver": "8b82bb2b1b5b4c1d56beeb88c98fcf894c23e8dee598d94c1c77099d3a80367f46",
     "firstIdentityPubk": "0x0ce5edc204ae977d6d69fcc6b339a57b544ef4d094929f3eb918a77dfba26998e77ec5b29a379dd59bbe962e2b22745143aa2b52c4a875b7492c137eeebf4055",
@@ -26,8 +33,8 @@
     "tokenActivationDate": 1563782792,
     "tokenNotBefore": 123456789,
     "jsonTokenId": "ze298y42sba",
-    "network": "quor",
-    "networkId": "redT",
+    "network": "besu",
+    "networkId": "redB",
     "tokenPayload": {
         "header": {
             "alg": "ES256K",
@@ -40,7 +47,7 @@
             "gwu": "http://1.2.3.4:8097/alastria/presentation",
             "cbu": "http://1.2.3.4:8097/alastria/presentation",
             "iat": 1590569132,
-            "ani": "redT",
+            "ani": "redB",
             "exp": 1563783392
         }
     },
@@ -66,10 +73,10 @@
             "field_name": "email"
         }
     ],
-    "entity1": "0x4b83432035d1477d3a99b23baa82bd9db61a2d68",
-    "didEntity1": "did:ala:quor:redT:4b83432035d1477d3a99b23baa82bd9db61a2d68",
-    "entity2": "0x3eff8efba40fb7c84a339d0be74a11b3b068ba90",
-    "didEntity2": "did:ala:quor:redT:3eff8efba40fb7c84a339d0be74a11b3b068ba90",
+    "entity1": "0xd2f868f056ef3a48bbc8d446dfed411e9bf93ab0",
+    "didEntity1": "did:ala:quor:redT:d2f868f056ef3a48bbc8d446dfed411e9bf93ab0",
+    "entity2": "0x",
+    "didEntity2": "did:ala:besu:redB:",
     "entity3": "0x87076e4969c946cbe1ebd4ab68af2f23c807780b",
     "didEntity3": "did:ala:quor:redT:87076e4969c946cbe1ebd4ab68af2f23c807780b",
     "subject1": "0x7fe5f08f485686b58d5ac0cb7f066166a3f2a28f",

@@ -1,7 +1,7 @@
 const { transactionFactory } = require('alastria-identity-lib')
 const fs = require('fs')
 
-const rawdata = fs.readFileSync('../configuration.json')
+const rawdata = fs.readFileSync('../configuration-b.json')
 const configData = JSON.parse(rawdata)
 const subjectPresentationHashData = fs.readFileSync(`./PSMHashSubject1.json`)
 const subjectPresentationHash = JSON.parse(subjectPresentationHashData)
